@@ -8,8 +8,13 @@
  * 
  * @author Michael Kölling and David J. Barnes
  * @version 2016.02.29
+ * 
+ * 5. yes it works
+ * 9. gives an error
+ * 10. we have to change the tests on salesitem test
  */
 public class Comment
+
 {
     private String author;
     private String text;

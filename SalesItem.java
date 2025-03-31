@@ -61,14 +61,14 @@ public class SalesItem
      */
     public boolean addComment(String author, String text, int rating)
     {
-        if(ratingInvalid(rating)) {  // reject invalid ratings
+        if (rating < 1 || rating > 5) {  // Reject invalid ratings (0 and 6)
             return false;
         }
-        
-        if(findCommentByAuthor(author) != null) {  // reject mutiple comments by same author
+
+        if (findCommentByAuthor(author) != null) { // Reject multiple comments by same author
             return false;
         }
-        
+
         comments.add(new Comment(author, text, rating));
         return true;
     }
@@ -78,7 +78,7 @@ public class SalesItem
      */
     public void removeComment(int index)
     {
-        if(index >=0 && index < comments.size()) { // if index is valid
+        if (index >= 0 && index < comments.size()) { // If index is valid
             comments.remove(index);
         }
     }
@@ -89,7 +89,7 @@ public class SalesItem
      */
     public void upvoteComment(int index)
     {
-        if(index >=0 && index < comments.size()) { // if index is valid
+        if (index >= 0 && index < comments.size()) { // If index is valid
             comments.get(index).upvote();
         }
     }
@@ -100,7 +100,7 @@ public class SalesItem
      */
     public void downvoteComment(int index)
     {
-        if(index >=0 && index < comments.size()) { // if index is valid
+        if (index >= 0 && index < comments.size()) { // If index is valid
             comments.get(index).downvote();
         }
     }
@@ -115,7 +115,7 @@ public class SalesItem
         System.out.println("Price: " + priceString(price));
         System.out.println();
         System.out.println("Customer comments:");
-        for(Comment comment : comments) {
+        for (Comment comment : comments) {
             System.out.println("-------------------------------------------");
             System.out.println(comment.getFullDetails());
         }
@@ -130,39 +130,19 @@ public class SalesItem
      */
     public Comment findMostHelpfulComment()
     {
-        Iterator<Comment> it = comments.iterator();
-        Comment best = it.next();
-        while(it.hasNext()) {
-            Comment current = it.next();
-            if(current.getVoteCount() > best.getVoteCount()) {
+        // If no comments exist, return null
+        if (comments.isEmpty()) {
+            return null;
+        }
+        
+        // Start with the first comment
+        Comment best = comments.get(0);
+        for (Comment current : comments) {
+            if (current.getVoteCount() > best.getVoteCount()) {
                 best = current;
             }
         }
         return best;
-    }
-    
-    /**
-     * Check whether the given rating is invalid. Return true if it is invalid.
-     * Valid ratings are in the range [1..5].
-     */
-    private boolean ratingInvalid(int rating)
-    {
-        return rating < 0 || rating > 5;
-    }
-    
-    /**
-     * Find the comment by the author with the given name.
-     * 
-     * @return The comment if it exists; null if it doesn't.
-     */
-    private Comment findCommentByAuthor(String author)
-    {
-        for(Comment comment : comments) {
-            if(comment.getAuthor().equals(author)) {
-                return comment;
-            }
-        }
-        return null;
     }
     
     /**
@@ -173,12 +153,27 @@ public class SalesItem
     private String priceString(int price)
     {
         int dollars = price / 100;
-        int cents = price - (dollars*100);
-        if(cents <= 9) {
-            return "$" + dollars + ".0" + cents;  // include zero padding if necessary
-        }
-        else {
+        int cents = price - (dollars * 100);
+        if (cents <= 9) {
+            return "$" + dollars + ".0" + cents;  // Include zero padding if necessary
+        } else {
             return "$" + dollars + "." + cents;
         }
     }
+
+    /**
+     * Find the comment by the author with the given name.
+     * 
+     * @return The comment if it exists; null if it doesn't.
+     */
+    private Comment findCommentByAuthor(String author)
+    {
+        for (Comment comment : comments) {
+            if (comment.getAuthor().equals(author)) {
+                return comment;
+            }
+        }
+        return null;
+    }
 }
+
